@@ -1,3 +1,3 @@
-module johnmatthiggins/sort-imports
+module github.com/johnmatthiggins/sort-imports
 
 go 1.22.0
