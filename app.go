@@ -43,6 +43,7 @@ func main() {
 			// print out original text if we can't figure out
 			// how to parse it...
 			fmt.Print(strings.Join(lines, "\n"))
+			fmt.Fprintf(os.Stderr, "Could not parse lines...\n")
 			return
 		}
 		statements[i] = *importStatement
@@ -63,11 +64,21 @@ func compareImportStatements(a, b ImportStatement) int {
 }
 
 func (stmt *ImportStatement) PrintStatement() {
-	fmt.Printf("import %s from %s\n", stmt.componentName, stmt.importPath)
+	var sb strings.Builder
+
+	for _, c := range []rune(stmt.rawLine) {
+		if c == ' ' {
+			sb.WriteString(" ")
+		} else {
+			break
+		}
+	}
+
+	fmt.Printf("%simport %s from %s\n", sb.String(), stmt.componentName, stmt.importPath)
 }
 
 func parseImportStatement(line string) (*ImportStatement, error) {
-	segments := strings.Split(line, " ")
+	segments := strings.Split(strings.TrimSpace(line), " ")
 	if len(segments) != 4 {
 		err := fmt.Errorf(
 			"Expected 4 segments after splitting on space character, but found %d.",
